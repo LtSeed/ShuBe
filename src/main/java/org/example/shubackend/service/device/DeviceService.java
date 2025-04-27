@@ -1,8 +1,8 @@
 package org.example.shubackend.service.device;
 
 import lombok.RequiredArgsConstructor;
+import org.example.shubackend.entity.work.device.Device;
 import org.example.shubackend.repository.DeviceRepository;
-import org.example.shubackend.entity.work.Device;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +19,7 @@ public class DeviceService {
     }
 
     @Transactional
-    public void updateStatus(Device device, String status) {
+    public void updateStatus(Device device, Device.Status status) {
         device.setStatus(status);
         repo.save(device);
     }

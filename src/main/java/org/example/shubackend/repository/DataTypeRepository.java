@@ -1,6 +1,6 @@
 package org.example.shubackend.repository;
 
-import org.example.shubackend.entity.work.DataType;
+import org.example.shubackend.entity.work.common.DataType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

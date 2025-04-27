@@ -1,6 +1,6 @@
 package org.example.shubackend.repository;
 
-import org.example.shubackend.entity.work.InspectionPlan;
+import org.example.shubackend.entity.work.inspection.InspectionPlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

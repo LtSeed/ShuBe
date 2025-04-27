@@ -1,6 +1,6 @@
 package org.example.shubackend.repository;
 
-import org.example.shubackend.entity.work.DeviceRole;
+import org.example.shubackend.entity.work.device.DeviceRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

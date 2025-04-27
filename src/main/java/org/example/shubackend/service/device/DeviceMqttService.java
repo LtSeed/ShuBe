@@ -1,5 +1,7 @@
 package org.example.shubackend.service.device;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +12,8 @@ import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.example.shubackend.entity.work.device.Device;
 import org.example.shubackend.repository.DeviceRepository;
-import org.example.shubackend.service.MqttProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,6 +37,8 @@ public class DeviceMqttService implements MqttCallback {
 
     // 记录最近一次心跳时间
     private final Map<Integer, Instant> heartbeatMap = new ConcurrentHashMap<>();
+    private final ObjectMapper objectMapper;
+    private final TelemetryProcessor telemetryProcessor;
 
     @Value("${heartbeat.timeout-ms:1000}")
     private long heartbeatTimeoutMs;
@@ -41,9 +46,17 @@ public class DeviceMqttService implements MqttCallback {
     @PostConstruct
     public void init() throws Exception {
         client.setCallback(this);
-        client.subscribe(props.getTopic().getHeartbeat(), props.getQos());
-        client.subscribe(props.getTopic().getData(), props.getQos());
-        log.info("✅ MQTT subscribed to topics: {} , {}", props.getTopic().getHeartbeat(), props.getTopic().getData());
+        List<Device> devices = deviceRepo.findAll();
+        for (Device device : devices) {
+            Device.Topic topic = device.buildTopic();
+            try {
+                client.subscribe(topic.getHeartbeat(), props.getQos());
+                client.subscribe(topic.getData(), props.getQos());
+                log.info("✅ MQTT subscribed to topics: {} , {}", topic.getHeartbeat(), topic.getData());
+            } catch (MqttException e) {
+                log.error("MQTT subscribe error :{}", e.getMessage());
+            }
+        }
     }
 
     @PreDestroy
@@ -58,25 +71,12 @@ public class DeviceMqttService implements MqttCallback {
         heartbeatMap.forEach((deviceId, lastSeen) -> {
             if (now.toEpochMilli() - lastSeen.toEpochMilli() > heartbeatTimeoutMs) {
                 deviceRepo.findById(deviceId).ifPresent(d -> {
-                    if (!"offline".equalsIgnoreCase(d.getStatus())) {
-                        d.setStatus("offline");
+                    if (!d.getStatus().equals(Device.Status.OFFLINE)) {
+                        d.setStatus(Device.Status.OFFLINE);
                         deviceRepo.save(d);
                         log.warn("🚨 Device {} offline (last heartbeat {})", deviceId, lastSeen);
                     }
                 });
-            }
-        });
-    }
-
-    // 250ms 轮询：向设备发布心跳请求 (可选)
-    @Scheduled(fixedRate = 250, initialDelay = 50)
-    public void publishHeartbeatRequest() {
-        heartbeatMap.keySet().forEach(deviceId -> {
-            String topic = String.format(props.getTopic().getCommand(), deviceId);
-            try {
-                client.publish(topic, new MqttMessage("ping".getBytes(StandardCharsets.UTF_8)));
-            } catch (MqttException e) {
-                log.error("Publish heartbeat to {} failed", topic, e);
             }
         });
     }
@@ -109,19 +109,43 @@ public class DeviceMqttService implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) {
         log.debug("📥 MQTT [{}] {}", topic, message);
-        if (topic.matches(props.getTopic().getHeartbeat().replace("+", "\\d+"))) {
-            int deviceId = extractDeviceId(topic);
-            heartbeatMap.put(deviceId, Instant.now());
-            deviceRepo.findById(deviceId).ifPresent(d -> {
-                if (!"normal".equalsIgnoreCase(d.getStatus())) {
-                    d.setStatus("normal");
-                    deviceRepo.save(d);
+
+        List<Device> devices = deviceRepo.findAll();
+        for (Device device : devices) {
+            Device.Topic topic1 = device.buildTopic();
+            // ---------- 1)  heartbeat ----------
+            if (topic.matches(topic1.getHeartbeat().replace("+", "\\\\d+"))) {
+                int deviceId = extractDeviceId(topic);
+
+                heartbeatMap.put(deviceId, Instant.now());        // refresh heartbeat
+
+                deviceRepo.findById(deviceId).ifPresent(d -> {
+                    if (!d.getStatus().equals(Device.Status.NORMAL)) {
+                        d.setStatus(Device.Status.NORMAL);
+                        deviceRepo.save(d);
+                    }
+                });
+                return;   // nothing else to do
+            }
+
+            // ---------- 2)  telemetry DATA ----------
+            if (topic.matches(topic1.getData().replace("+", "\\\\d+"))) {
+                int deviceId = extractDeviceId(topic);
+                try {
+                    // JSON payload -> Map<String,Object>
+                    Map<String,Object> metrics = objectMapper
+                            .readValue(message.getPayload(), new TypeReference<>() {});
+
+                    // persist snapshot & evaluate events
+                    telemetryProcessor.updateSnapshot(deviceId, metrics);
+
+                } catch (Exception e) {
+                    log.error("❌ Unable to parse telemetry JSON from device {}", deviceId, e);
                 }
-            });
-        } else if (topic.matches(props.getTopic().getData().replace("+", "\\d+"))) {
-            int deviceId = extractDeviceId(topic);
-            // TODO: 解析 JSON 载荷并写入 device_parameters / inspection_records 等表
+            }
         }
+
+
     }
 
     private int extractDeviceId(String topic) {

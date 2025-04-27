@@ -1,20 +1,40 @@
+CREATE TABLE data
+(
+    id           INT AUTO_INCREMENT NOT NULL,
+    data_type_id INT                NOT NULL,
+    data         VARCHAR(255)       NULL,
+    CONSTRAINT pk_data PRIMARY KEY (id)
+);
+
 CREATE TABLE data_types
 (
     id            INT AUTO_INCREMENT NOT NULL,
     type_name     VARCHAR(255)       NOT NULL,
-    data_type     VARCHAR(255)       NOT NULL,
     unit          VARCHAR(255)       NULL,
     `description` TEXT               NULL,
     CONSTRAINT pk_data_types PRIMARY KEY (id)
 );
 
-CREATE TABLE device_parameters
+CREATE TABLE device_event_log
 (
-    id          INT AUTO_INCREMENT NOT NULL,
-    device_id   INT                NOT NULL,
-    param_type  INT                NOT NULL,
-    param_value JSON               NULL,
-    CONSTRAINT pk_device_parameters PRIMARY KEY (id)
+    id        BIGINT AUTO_INCREMENT NOT NULL,
+    device_id INT                   NOT NULL,
+    event_id  INT                   NOT NULL,
+    timestamp datetime              NULL,
+    CONSTRAINT pk_device_event_log PRIMARY KEY (id)
+);
+
+CREATE TABLE device_events
+(
+    id              INT AUTO_INCREMENT NOT NULL,
+    code            SMALLINT           NULL,
+    priority        INT                NULL,
+    device_role_id  INT                NOT NULL,
+    emergency_id    INT                NULL,
+    metric          VARCHAR(255)       NULL,
+    operator        VARCHAR(255)       NULL,
+    threshold_value VARCHAR(255)       NULL,
+    CONSTRAINT pk_device_events PRIMARY KEY (id)
 );
 
 CREATE TABLE device_roles
@@ -27,39 +47,31 @@ CREATE TABLE device_roles
 
 CREATE TABLE devices
 (
-    id               INT AUTO_INCREMENT NOT NULL,
-    device_name      VARCHAR(255)       NOT NULL,
-    device_role_id   INT                NOT NULL,
-    facility_type_id INT                NOT NULL,
-    location_id      VARCHAR(255)       NULL,
-    status           VARCHAR(255)       NOT NULL,
+    id             INT AUTO_INCREMENT NOT NULL,
+    device_name    VARCHAR(255)       NOT NULL,
+    device_role_id INT                NOT NULL,
+    location_id    INT                NOT NULL,
+    status         VARCHAR(255)       NULL,
     CONSTRAINT pk_devices PRIMARY KEY (id)
 );
 
-CREATE TABLE emergency_plans
+CREATE TABLE emergencies
 (
-    plan_id       INT          NOT NULL,
-    plan_name     VARCHAR(255) NOT NULL,
-    plan_type     INT          NOT NULL,
-    `description` TEXT         NULL,
-    CONSTRAINT pk_emergency_plans PRIMARY KEY (plan_id)
+    id              INT AUTO_INCREMENT NOT NULL,
+    code            SMALLINT           NULL,
+    name            VARCHAR(255)       NULL,
+    required_events JSON               NULL,
+    within_seconds  INT                NULL,
+    CONSTRAINT pk_emergencies PRIMARY KEY (id)
 );
 
-CREATE TABLE emergency_plans_type
+CREATE TABLE emergency_log
 (
-    id   INT AUTO_INCREMENT NOT NULL,
-    type VARCHAR(255)       NOT NULL,
-    CONSTRAINT pk_emergency_plans_type PRIMARY KEY (id)
-);
-
-CREATE TABLE facility_types
-(
-    id            INT AUTO_INCREMENT NOT NULL,
-    type_name     VARCHAR(255)       NOT NULL,
-    `description` TEXT               NULL,
-    created_at    datetime           NULL,
-    updated_at    datetime           NULL,
-    CONSTRAINT pk_facility_types PRIMARY KEY (id)
+    id           BIGINT AUTO_INCREMENT NOT NULL,
+    device_id    INT                   NOT NULL,
+    emergency_id INT                   NOT NULL,
+    timestamp    datetime              NULL,
+    CONSTRAINT pk_emergency_log PRIMARY KEY (id)
 );
 
 CREATE TABLE inspection_plans
@@ -94,7 +106,15 @@ CREATE TABLE locations
     CONSTRAINT pk_locations PRIMARY KEY (id)
 );
 
-CREATE TABLE maintenance_orders
+CREATE TABLE permissions
+(
+    permissions_id INT AUTO_INCREMENT NOT NULL,
+    name           VARCHAR(100)       NOT NULL,
+    `description`  VARCHAR(255)       NULL,
+    CONSTRAINT pk_permissions PRIMARY KEY (permissions_id)
+);
+
+CREATE TABLE repair_orders
 (
     id                INT AUTO_INCREMENT NOT NULL,
     device_id         INT                NOT NULL,
@@ -103,11 +123,11 @@ CREATE TABLE maintenance_orders
     fault_description TEXT               NULL,
     status            VARCHAR(255)       NULL,
     created_at        datetime           NULL,
-    completed_at      datetime           NULL,
-    CONSTRAINT pk_maintenance_orders PRIMARY KEY (id)
+    due               datetime           NULL,
+    CONSTRAINT pk_repair_orders PRIMARY KEY (id)
 );
 
-CREATE TABLE maintenance_records
+CREATE TABLE repair_records
 (
     id         INT AUTO_INCREMENT NOT NULL,
     order_id   INT                NOT NULL,
@@ -116,15 +136,7 @@ CREATE TABLE maintenance_records
     end_time   datetime           NULL,
     cost       DECIMAL            NULL,
     parts_used JSON               NULL,
-    CONSTRAINT pk_maintenance_records PRIMARY KEY (id)
-);
-
-CREATE TABLE permissions
-(
-    permissions_id INT AUTO_INCREMENT NOT NULL,
-    name           VARCHAR(100)       NOT NULL,
-    `description`  VARCHAR(255)       NULL,
-    CONSTRAINT pk_permissions PRIMARY KEY (permissions_id)
+    CONSTRAINT pk_repair_records PRIMARY KEY (id)
 );
 
 CREATE TABLE role_permissions
@@ -190,20 +202,32 @@ ALTER TABLE roles
 ALTER TABLE token
     ADD CONSTRAINT uc_token_token_value UNIQUE (token_value);
 
+ALTER TABLE data
+    ADD CONSTRAINT FK_DATA_ON_DATA_TYPE FOREIGN KEY (data_type_id) REFERENCES data_types (id);
+
 ALTER TABLE devices
     ADD CONSTRAINT FK_DEVICES_ON_DEVICE_ROLE FOREIGN KEY (device_role_id) REFERENCES device_roles (id);
 
 ALTER TABLE devices
-    ADD CONSTRAINT FK_DEVICES_ON_FACILITY_TYPE FOREIGN KEY (facility_type_id) REFERENCES facility_types (id);
+    ADD CONSTRAINT FK_DEVICES_ON_LOCATION FOREIGN KEY (location_id) REFERENCES locations (id);
 
-ALTER TABLE device_parameters
-    ADD CONSTRAINT FK_DEVICE_PARAMETERS_ON_DEVICE FOREIGN KEY (device_id) REFERENCES devices (id);
+ALTER TABLE device_events
+    ADD CONSTRAINT FK_DEVICE_EVENTS_ON_DEVICEROLE FOREIGN KEY (device_role_id) REFERENCES device_roles (id);
 
-ALTER TABLE device_parameters
-    ADD CONSTRAINT FK_DEVICE_PARAMETERS_ON_PARAM_TYPE FOREIGN KEY (param_type) REFERENCES data_types (id);
+ALTER TABLE device_events
+    ADD CONSTRAINT FK_DEVICE_EVENTS_ON_EMERGENCY FOREIGN KEY (emergency_id) REFERENCES emergencies (id);
 
-ALTER TABLE emergency_plans
-    ADD CONSTRAINT FK_EMERGENCY_PLANS_ON_PLAN_TYPE FOREIGN KEY (plan_type) REFERENCES emergency_plans_type (id);
+ALTER TABLE device_event_log
+    ADD CONSTRAINT FK_DEVICE_EVENT_LOG_ON_DEVICE FOREIGN KEY (device_id) REFERENCES devices (id);
+
+ALTER TABLE device_event_log
+    ADD CONSTRAINT FK_DEVICE_EVENT_LOG_ON_EVENT FOREIGN KEY (event_id) REFERENCES device_events (id);
+
+ALTER TABLE emergency_log
+    ADD CONSTRAINT FK_EMERGENCY_LOG_ON_DEVICE FOREIGN KEY (device_id) REFERENCES devices (id);
+
+ALTER TABLE emergency_log
+    ADD CONSTRAINT FK_EMERGENCY_LOG_ON_EMERGENCY FOREIGN KEY (emergency_id) REFERENCES emergencies (id);
 
 ALTER TABLE inspection_plans
     ADD CONSTRAINT FK_INSPECTION_PLANS_ON_ASSIGNEE FOREIGN KEY (assignee_id) REFERENCES users (user_id);
@@ -220,17 +244,17 @@ ALTER TABLE inspection_records
 ALTER TABLE inspection_records
     ADD CONSTRAINT FK_INSPECTION_RECORDS_ON_PLAN FOREIGN KEY (plan_id) REFERENCES inspection_plans (id);
 
-ALTER TABLE maintenance_orders
-    ADD CONSTRAINT FK_MAINTENANCE_ORDERS_ON_ASSIGNEE FOREIGN KEY (assignee_id) REFERENCES users (user_id);
+ALTER TABLE repair_orders
+    ADD CONSTRAINT FK_REPAIR_ORDERS_ON_ASSIGNEE FOREIGN KEY (assignee_id) REFERENCES users (user_id);
 
-ALTER TABLE maintenance_orders
-    ADD CONSTRAINT FK_MAINTENANCE_ORDERS_ON_DEVICE FOREIGN KEY (device_id) REFERENCES devices (id);
+ALTER TABLE repair_orders
+    ADD CONSTRAINT FK_REPAIR_ORDERS_ON_DEVICE FOREIGN KEY (device_id) REFERENCES devices (id);
 
-ALTER TABLE maintenance_orders
-    ADD CONSTRAINT FK_MAINTENANCE_ORDERS_ON_REPORTER FOREIGN KEY (reporter_id) REFERENCES users (user_id);
+ALTER TABLE repair_orders
+    ADD CONSTRAINT FK_REPAIR_ORDERS_ON_REPORTER FOREIGN KEY (reporter_id) REFERENCES users (user_id);
 
-ALTER TABLE maintenance_records
-    ADD CONSTRAINT FK_MAINTENANCE_RECORDS_ON_ORDER FOREIGN KEY (order_id) REFERENCES maintenance_orders (id);
+ALTER TABLE repair_records
+    ADD CONSTRAINT FK_REPAIR_RECORDS_ON_ORDER FOREIGN KEY (order_id) REFERENCES repair_orders (id);
 
 ALTER TABLE token
     ADD CONSTRAINT FK_TOKEN_ON_USER FOREIGN KEY (user_id) REFERENCES users (user_id);
