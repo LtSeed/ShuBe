@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-/* —— 其余实体可通过 IDE **批量生成**，或按以下快捷模板复制替换 —— */
 @RestController
 @RequestMapping("/data-types")
 @RequiredArgsConstructor
