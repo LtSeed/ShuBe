@@ -19,7 +19,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -133,11 +132,12 @@ public class DeviceMqttService implements MqttCallback {
                 int deviceId = extractDeviceId(topic);
                 try {
                     // JSON payload -> Map<String,Object>
-                    Map<String,Object> metrics = objectMapper
-                            .readValue(message.getPayload(), new TypeReference<>() {});
+                    Map<String, Object> metrics = objectMapper
+                            .readValue(message.getPayload(), new TypeReference<>() {
+                            });
 
                     // persist snapshot & evaluate events
-                    telemetryProcessor.updateSnapshot(deviceId, metrics);
+                    telemetryProcessor.handleTelemetry(deviceId, metrics);
 
                 } catch (Exception e) {
                     log.error("❌ Unable to parse telemetry JSON from device {}", deviceId, e);

@@ -18,24 +18,24 @@ public class AuthController {
     private final AuthService svc;
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody @Valid AuthRequest req){
+    public AuthResponse login(@RequestBody @Valid AuthRequest req) {
         return svc.login(req);
     }
 
     @PostMapping("/refresh")
-    public AuthResponse refresh(@RequestHeader("Authorization") String bearer){
-        String token = bearer.replace("Bearer ","");
+    public AuthResponse refresh(@RequestHeader("Authorization") String bearer) {
+        String token = bearer.replace("Bearer ", "");
         return svc.refresh(token);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String bearer){
-        svc.logout(bearer.replace("Bearer ",""));
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String bearer) {
+        svc.logout(bearer.replace("Bearer ", ""));
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/register")
-    public RegisterResponse register(@Valid @RequestBody RegisterRequest req){
+    public RegisterResponse register(@Valid @RequestBody RegisterRequest req) {
         return svc.register(req);
     }
 }

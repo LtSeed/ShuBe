@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.Map;
 
 public record DeviceEventFired(Device device,
-                          DeviceEvent meta,
-                          Instant timestamp,
-                          Map<String, Object> metrics) {}
+                               DeviceEvent meta,
+                               Instant timestamp,
+                               Map<String, Object> metrics) {
+}

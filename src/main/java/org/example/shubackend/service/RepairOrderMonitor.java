@@ -5,8 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.shubackend.entity.work.device.emergency.Emergency;
 import org.example.shubackend.entity.work.device.emergency.EmergencyLog;
 import org.example.shubackend.entity.work.device.event.EmergencyTriggered;
-import org.example.shubackend.entity.work.repair.RepairOrder;
-import org.example.shubackend.repository.*;
+import org.example.shubackend.repository.EmergencyLogRepository;
+import org.example.shubackend.repository.EmergencyRepository;
+import org.example.shubackend.repository.RepairOrderRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,16 +26,20 @@ import static org.example.shubackend.entity.work.device.emergency.EmergencyCode.
 @RequiredArgsConstructor
 public class RepairOrderMonitor {
 
-    private final RepairOrderRepository     orderRepo;
-    private final EmergencyRepository       emRepo;
-    private final EmergencyLogRepository    emLogRepo;
+    private final RepairOrderRepository orderRepo;
+    private final EmergencyRepository emRepo;
+    private final EmergencyLogRepository emLogRepo;
     private final ApplicationEventPublisher publisher;
 
-    /** deviceId -> active overdue emergency ids (防止重复) */
+    /**
+     * deviceId -> active overdue emergency ids (防止重复)
+     */
     private final Set<Integer> active = ConcurrentHashMap.newKeySet();
 
-    /** 每 5 分钟扫描一次 */
-    @Scheduled(fixedRate = 5*60*1000, initialDelay = 45_000)
+    /**
+     * 每 5 分钟扫描一次
+     */
+    @Scheduled(fixedRate = 5 * 60 * 1000, initialDelay = 45_000)
     @Transactional
     public void checkOrders() {
 
@@ -46,7 +51,7 @@ public class RepairOrderMonitor {
         orderRepo.findAll().forEach(order -> {
 
             boolean finished = "已完成".equals(order.getStatus()) || "已关闭".equals(order.getStatus());
-            boolean overdue  = order.getDue() != null && now.isAfter(order.getDue());
+            boolean overdue = order.getDue() != null && now.isAfter(order.getDue());
 
             int key = order.getId();               // 以工单维度去重
 

@@ -7,12 +7,19 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "jwt")
-@Getter @Setter
+@Getter
+@Setter
 public class JwtProperties {
-    /** HS256 secret */
+    /**
+     * HS256 secret
+     */
     private String secret = "ChangeThisSecret!!";
-    /** access token lifetime in minutes */
-    private long   accessMinutes  = 15;
-    /** refresh token lifetime in days */
-    private long   refreshDays    = 7;
+    /**
+     * access token lifetime in minutes
+     */
+    private long accessMinutes = 15;
+    /**
+     * refresh token lifetime in days
+     */
+    private long refreshDays = 7;
 }

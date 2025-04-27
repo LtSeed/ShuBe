@@ -7,4 +7,5 @@ import java.time.Instant;
 
 public record EmergencyTriggered(Emergency meta,
                                  Device device,
-                                 Instant timestamp) {}
+                                 Instant timestamp) {
+}

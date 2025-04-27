@@ -26,8 +26,6 @@ public class Device extends BaseEntity {
     @Builder.Default
     private Status status = Status.NORMAL;
 
-    public enum Status {NORMAL, FAULT, OFFLINE}
-
     public Topic buildTopic() {
         Topic topic = new Topic();
 
@@ -43,6 +41,8 @@ public class Device extends BaseEntity {
 
         return topic;
     }
+
+    public enum Status {NORMAL, FAULT, OFFLINE}
 
     @Getter
     @Setter

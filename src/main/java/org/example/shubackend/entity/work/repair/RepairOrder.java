@@ -7,7 +7,6 @@ import org.example.shubackend.entity.User;
 import org.example.shubackend.entity.work.device.Device;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity

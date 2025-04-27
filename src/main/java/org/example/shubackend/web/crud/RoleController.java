@@ -1,4 +1,4 @@
-package org.example.shubackend.web;
+package org.example.shubackend.web.crud;
 
 import org.example.shubackend.entity.Role;
 import org.example.shubackend.repository.RoleRepository;

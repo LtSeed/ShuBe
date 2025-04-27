@@ -2,7 +2,6 @@ package org.example.shubackend.web.crud;
 
 import lombok.RequiredArgsConstructor;
 import org.example.shubackend.entity.work.device.emergency.EmergencyLog;
-import org.example.shubackend.entity.work.device.event.DeviceEventLog;
 import org.example.shubackend.service.crud.EmergencyLogCrudService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

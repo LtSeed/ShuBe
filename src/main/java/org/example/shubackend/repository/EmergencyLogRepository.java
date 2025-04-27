@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.Instant;
 
-public interface EmergencyLogRepository extends JpaRepository<EmergencyLog,Long> {
+public interface EmergencyLogRepository extends JpaRepository<EmergencyLog, Long> {
     boolean existsByDeviceAndEmergencyAndTimestampAfter(Device device, Emergency em, Instant instant);
 }
