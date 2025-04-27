@@ -34,6 +34,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("org.eclipse.paho:org.eclipse.paho.mqttv5.client:1.2.5")
 }
 
 tasks.withType<Test> {
