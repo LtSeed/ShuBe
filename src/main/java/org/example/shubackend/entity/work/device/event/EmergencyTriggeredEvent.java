@@ -5,7 +5,7 @@ import org.example.shubackend.entity.work.device.emergency.Emergency;
 
 import java.time.Instant;
 
-public record EmergencyTriggered(Emergency meta,
-                                 Device device,
-                                 Instant timestamp) {
+public record EmergencyTriggeredEvent(Emergency meta,
+                                      Device device,
+                                      Instant timestamp) {
 }

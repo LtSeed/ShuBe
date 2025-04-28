@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.shubackend.entity.work.device.emergency.Emergency;
 import org.example.shubackend.entity.work.device.emergency.EmergencyLog;
-import org.example.shubackend.entity.work.device.event.EmergencyTriggered;
+import org.example.shubackend.entity.work.device.event.EmergencyTriggeredEvent;
 import org.example.shubackend.entity.work.inspection.InspectionPlan;
 import org.example.shubackend.entity.work.inspection.InspectionRecord;
 import org.example.shubackend.repository.EmergencyLogRepository;
@@ -71,7 +71,7 @@ public class InspectionPlanMonitor {
                 log.warn("⏰ InspectionPlan {} overdue, triggering emergency", plan.getId());
                 EmergencyLog logEntry = new EmergencyLog(null, plan.getDevice(), missEm, now);
                 emLogRepo.save(logEntry);
-                publisher.publishEvent(new EmergencyTriggered(missEm, plan.getDevice(), now));
+                publisher.publishEvent(new EmergencyTriggeredEvent(missEm, plan.getDevice(), now));
             }
         }
     }

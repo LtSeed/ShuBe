@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.shubackend.entity.work.device.emergency.Emergency;
 import org.example.shubackend.entity.work.device.emergency.EmergencyLog;
-import org.example.shubackend.entity.work.device.event.EmergencyTriggered;
+import org.example.shubackend.entity.work.device.event.EmergencyTriggeredEvent;
 import org.example.shubackend.repository.EmergencyLogRepository;
 import org.example.shubackend.repository.EmergencyRepository;
 import org.example.shubackend.repository.RepairOrderRepository;
@@ -58,7 +58,7 @@ public class RepairOrderMonitor {
             if (overdue && !finished && active.add(key)) {
                 // 首次逾期
                 emLogRepo.save(new EmergencyLog(null, order.getDevice(), overdueEm, now));
-                publisher.publishEvent(new EmergencyTriggered(overdueEm, order.getDevice(), now));
+                publisher.publishEvent(new EmergencyTriggeredEvent(overdueEm, order.getDevice(), now));
                 log.warn("🛠️  RepairOrder {} overdue, emergency triggered", order.getId());
             }
 

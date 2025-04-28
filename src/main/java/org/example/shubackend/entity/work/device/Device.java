@@ -39,6 +39,9 @@ public class Device extends BaseEntity {
         // 数据上传 Topic，比如 "device/123/data"
         topic.setData(rootTopic + "/data");
 
+        // 数据下载 Topic，比如 "device/123/cmd"
+        topic.setData(rootTopic + "/cmd");
+
         return topic;
     }
 
@@ -50,5 +53,6 @@ public class Device extends BaseEntity {
         private String root;
         private String heartbeat;
         private String data;
+        private String command;
     }
 }

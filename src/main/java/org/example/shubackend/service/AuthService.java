@@ -87,6 +87,7 @@ public class AuthService {
                 .password(encoder.encode(req.password()))
                 .createdAt(Instant.now())
                 .email(req.email())
+                .phone(req.phone())
                 .roles(new HashSet<>())
                 .build();
 

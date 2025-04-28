@@ -4,13 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.shubackend.entity.work.device.Device;
 import org.example.shubackend.entity.work.device.emergency.Emergency;
+import org.example.shubackend.entity.work.device.emergency.EmergencyCode;
 import org.example.shubackend.entity.work.device.emergency.EmergencyLog;
 import org.example.shubackend.entity.work.device.event.DeviceEventFired;
 import org.example.shubackend.entity.work.device.event.DeviceEventLog;
-import org.example.shubackend.entity.work.device.event.EmergencyTriggered;
+import org.example.shubackend.entity.work.device.event.EmergencyTriggeredEvent;
 import org.example.shubackend.repository.DeviceEventLogRepository;
 import org.example.shubackend.repository.EmergencyLogRepository;
 import org.example.shubackend.repository.EmergencyRepository;
+import org.example.shubackend.service.area.AreaEmergencyService;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +48,7 @@ public class DeviceEventListener {
      * deviceId -> active emergency ids
      */
     private final Map<Integer, Set<Integer>> activeEmergencies = new ConcurrentHashMap<>();
+    private final AreaEmergencyService areaEmergencyService;
 
     /* === 1) receive DeviceEventFired from TelemetryProcessor === */
     @EventListener
@@ -73,6 +76,7 @@ public class DeviceEventListener {
                 triggerEmergencyOnce(fired.device(), em, fired.timestamp());
             }
         }
+
     }
 
     /* === 2) helper: fire EmergencyTriggered + log ON edge === */
@@ -83,8 +87,10 @@ public class DeviceEventListener {
         if (emSet.add(em.getId())) {       // first time ON
             emLogRepo.save(new EmergencyLog(null, device, em, ts));
             log.warn("🚨 Emergency {} triggered on device {}", em.getName(), device.getId());
-            publisher.publishEvent(new EmergencyTriggered(em, device, ts));
+            publisher.publishEvent(new EmergencyTriggeredEvent(em, device, ts));
         }
+        EmergencyCode type = em.getCode();
+        areaEmergencyService.checkAreaEmergency(device, type);
     }
 
     /* === 3) emergency matching against ring buffer === */

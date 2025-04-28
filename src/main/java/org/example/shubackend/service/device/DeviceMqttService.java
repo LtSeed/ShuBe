@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -152,5 +153,21 @@ public class DeviceMqttService implements MqttCallback {
         // fpfm/device/{id}/xxx  → 取 {id}
         String[] seg = topic.split("/");
         return Integer.parseInt(seg[2]);
+    }
+
+    public void sendCommand(String deviceId, String command) {
+        Device device = deviceRepo.findById(Integer.valueOf(deviceId))
+                .orElseThrow(() -> new IllegalArgumentException("unknown"));
+        sendCommand(device, command);
+    }
+
+    public void sendCommand(Device device, String command) {
+        try {
+            String topic = device.buildTopic().getCommand();
+            client.publish(topic, new MqttMessage(command.getBytes(StandardCharsets.UTF_8)));
+            log.info("➡️  MQTT cmd {} -> {}", command, topic);
+        } catch (MqttException e) {
+            log.error("❌ MQTT publish failed", e);
+        }
     }
 }
