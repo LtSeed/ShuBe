@@ -1,14 +1,9 @@
 package org.example.shubackend.repository;
 
-import org.example.shubackend.entity.User;
 import org.example.shubackend.entity.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
-    Optional<User> findByUsername(String username);
+public interface UserRoleRepository extends JpaRepository<UserRole, Integer> {
 }
-
