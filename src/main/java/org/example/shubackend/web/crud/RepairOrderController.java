@@ -15,31 +15,31 @@ import java.util.Optional;
 class RepairOrderController {
     private final RepairOrderCrudService svc;
 
-    @PreAuthorize("hasPermission(null,'REPAIR_ORDERS_READ')")
+    @PreAuthorize("hasPermission(principal, 'REPAIR_ORDERS_READ')")
     @GetMapping
     public List<RepairOrder> list() {
         return svc.findAll();
     }
 
-    @PreAuthorize("hasPermission(null,'REPAIR_ORDERS_READ')")
+    @PreAuthorize("hasPermission(principal, 'REPAIR_ORDERS_READ')")
     @GetMapping("/{id}")
     public Optional<RepairOrder> one(@PathVariable Integer id) {
         return svc.find(id);
     }
 
-    @PreAuthorize("hasPermission(null,'REPAIR_ORDERS_CREATE')")
+    @PreAuthorize("hasPermission(principal, 'REPAIR_ORDERS_CREATE')")
     @PostMapping
     public RepairOrder create(@RequestBody RepairOrder d) {
         return svc.create(d);
     }
 
-    @PreAuthorize("hasPermission(null,'REPAIR_ORDERS_UPDATE')")
+    @PreAuthorize("hasPermission(principal, 'REPAIR_ORDERS_UPDATE')")
     @PutMapping("/{id}")
     public RepairOrder upd(@PathVariable Integer id, @RequestBody RepairOrder d) {
         return svc.update(id, d);
     }
 
-    @PreAuthorize("hasPermission(null,'REPAIR_ORDERS_DELETE')")
+    @PreAuthorize("hasPermission(principal, 'REPAIR_ORDERS_DELETE')")
     @DeleteMapping("/{id}")
     public void del(@PathVariable Integer id) {
         svc.delete(id);
