@@ -43,7 +43,7 @@ public class AuthService {
 
         // persist refresh
         tokenRepo.save(Token.builder()
-                .user(userRepository.findByUsername(req.username()).orElseThrow())
+                .user(userRepository.findByUsername(req.username()).orElseThrow(()->new RuntimeException("user not found")))
                 .tokenValue(refresh)
                 .tokenType("refresh")
                 .status("active")

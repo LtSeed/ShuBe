@@ -7,5 +7,5 @@ public enum EmergencyCode {
     POWER_OUTAGE,               // 消防供电中断
     SMOKE_EMERGENCY,            // 大量烟雾
     INSPECTION_MISSED,           // 设备巡检逾期
-    REPAIR_OVERDUE          // 新增：维修工单逾期
+    REPAIR_OVERDUE          // 维修工单逾期
 }
