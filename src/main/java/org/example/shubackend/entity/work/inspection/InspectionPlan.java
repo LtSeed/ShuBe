@@ -9,6 +9,8 @@ import org.example.shubackend.entity.BaseEntity;
 import org.example.shubackend.entity.User;
 import org.example.shubackend.entity.work.device.Device;
 
+import java.util.Date;
+
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "inspection_plans")
@@ -27,6 +29,6 @@ public class InspectionPlan extends BaseEntity {
     @JoinColumn(name = "assignee_id", nullable = false)
     private User assignee;
 
-    private java.sql.Date nextDueDate;
+    private Date nextDueDate;
     private String status; // 未开始/进行中/已完成
 }

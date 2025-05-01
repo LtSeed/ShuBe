@@ -20,5 +20,5 @@ public class UserDto {
 
     private String phone;
 
-    private Set<Role> roles = new HashSet<>();
+    private final Set<Role> roles = new HashSet<>();
 }

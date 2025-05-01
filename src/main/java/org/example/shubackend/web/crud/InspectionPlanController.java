@@ -1,45 +1,53 @@
 package org.example.shubackend.web.crud;
 
 import lombok.RequiredArgsConstructor;
-import org.example.shubackend.entity.work.inspection.InspectionPlan;
+import lombok.extern.slf4j.Slf4j;
+import org.example.shubackend.dto.inspection.InspectionPlanDTO;
 import org.example.shubackend.service.crud.InspectionPlanCrudService;
+import org.example.shubackend.dtomapper.inspection.InspectionPlanMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/inspection-plans")
 @RequiredArgsConstructor
 class InspectionPlanController {
     private final InspectionPlanCrudService svc;
+    private final InspectionPlanMapper mapper;
 
-    @PreAuthorize("hasPermission(null,'INSPECTION_PLANS_READ')")
+
+    @PreAuthorize("hasPermission(principal,'INSPECTION_PLANS_READ')")
     @GetMapping
-    public List<InspectionPlan> list() {
-        return svc.findAll();
+    public List<InspectionPlanDTO> list() {
+        List<InspectionPlanDTO> dtoList = mapper.toDtoList(svc.findAll());
+        log.info("dtoList: {}", dtoList);
+        return dtoList;
     }
 
-    @PreAuthorize("hasPermission(null,'INSPECTION_PLANS_READ')")
+    @PreAuthorize("hasPermission(principal,'INSPECTION_PLANS_READ')")
     @GetMapping("/{id}")
-    public Optional<InspectionPlan> one(@PathVariable Integer id) {
-        return svc.find(id);
+    public InspectionPlanDTO one(@PathVariable Integer id) {
+        return mapper.toDto(svc.find(id)
+                .orElseThrow(() -> new RuntimeException("not found")));
     }
 
-    @PreAuthorize("hasPermission(null,'INSPECTION_PLANS_CREATE')")
+    @PreAuthorize("hasPermission(principal,'INSPECTION_PLANS_CREATE')")
     @PostMapping
-    public InspectionPlan create(@RequestBody InspectionPlan d) {
-        return svc.create(d);
+    public InspectionPlanDTO create(@RequestBody InspectionPlanDTO dto) {
+        return mapper.toDto(svc.createByDto(dto));
     }
 
-    @PreAuthorize("hasPermission(null,'INSPECTION_PLANS_UPDATE')")
+    @PreAuthorize("hasPermission(principal,'INSPECTION_PLANS_UPDATE')")
     @PutMapping("/{id}")
-    public InspectionPlan upd(@PathVariable Integer id, @RequestBody InspectionPlan d) {
-        return svc.update(id, d);
+    public InspectionPlanDTO update(@PathVariable Integer id,
+                                    @RequestBody InspectionPlanDTO dto) {
+        return mapper.toDto(svc.updateByDto(id, dto));
     }
 
-    @PreAuthorize("hasPermission(null,'INSPECTION_PLANS_DELETE')")
+    @PreAuthorize("hasPermission(principal,'INSPECTION_PLANS_DELETE')")
     @DeleteMapping("/{id}")
     public void del(@PathVariable Integer id) {
         svc.delete(id);

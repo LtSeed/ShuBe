@@ -6,13 +6,14 @@ import org.example.shubackend.dto.AuthResponse;
 import org.example.shubackend.dto.RegisterRequest;
 import org.example.shubackend.dto.RegisterResponse;
 import org.example.shubackend.entity.Token;
+import org.example.shubackend.entity.User;
 import org.example.shubackend.repository.TokenRepository;
 import org.example.shubackend.repository.UserRepository;
+import org.example.shubackend.security.JwtAuthFilter;
 import org.example.shubackend.security.JwtProperties;
 import org.example.shubackend.security.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,12 +27,12 @@ import java.util.Map;
 public class AuthService {
 
     private final AuthenticationManager authMgr;
-    private final UserDetailsService uds;
     private final JwtUtil jwt;
     private final JwtProperties props;
     private final TokenRepository tokenRepo;
     private final PasswordEncoder encoder;
     private final UserRepository userRepository;
+    private final JwtAuthFilter jwtAuthFilter;
 
     public AuthResponse login(AuthRequest req) {
         authMgr.authenticate(
@@ -42,8 +43,11 @@ public class AuthService {
         String refresh = jwt.generate(req.username(), Map.of("type", "refresh"), props.getRefreshDays() * 24 * 60);
 
         // persist refresh
+        User user = userRepository.findByUsername(req.username()).orElseThrow(() -> new RuntimeException("user not found"));
+        jwtAuthFilter.getAccessTokens().put(access, user);
+
         tokenRepo.save(Token.builder()
-                .user(userRepository.findByUsername(req.username()).orElseThrow(()->new RuntimeException("user not found")))
+                .user(user)
                 .tokenValue(refresh)
                 .tokenType("refresh")
                 .status("active")

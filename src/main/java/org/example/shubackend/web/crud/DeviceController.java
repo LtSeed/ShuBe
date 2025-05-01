@@ -1,41 +1,43 @@
 package org.example.shubackend.web.crud;
 
-import org.example.shubackend.entity.work.device.Device;
+import lombok.RequiredArgsConstructor;
+import org.example.shubackend.dto.device.DeviceDTO;
 import org.example.shubackend.service.crud.DeviceCrudService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/devices")
+@RequiredArgsConstructor
 public class DeviceController {
-    private final DeviceCrudService svc;
 
-    public DeviceController(DeviceCrudService svc) {
-        this.svc = svc;
-    }
+    private final DeviceCrudService svc;
 
     @PreAuthorize("hasPermission(null,'DEVICES_READ')")
     @GetMapping
-    public java.util.List<Device> list() {
-        return svc.findAll();
+    public List<DeviceDTO> list() {
+        return svc.findAllDto();
     }
 
     @PreAuthorize("hasPermission(null,'DEVICES_READ')")
     @GetMapping("/{id}")
-    public java.util.Optional<Device> one(@PathVariable Integer id) {
-        return svc.find(id);
+    public Optional<DeviceDTO> one(@PathVariable Integer id) {
+        return svc.findDto(id);
     }
 
     @PreAuthorize("hasPermission(null,'DEVICES_CREATE')")
     @PostMapping
-    public Device create(@RequestBody Device d) {
-        return svc.create(d);
+    public DeviceDTO create(@RequestBody DeviceDTO dto) {
+        return svc.createDto(dto);
     }
 
     @PreAuthorize("hasPermission(null,'DEVICES_UPDATE')")
     @PutMapping("/{id}")
-    public Device update(@PathVariable Integer id, @RequestBody Device d) {
-        return svc.update(id, d);
+    public DeviceDTO update(@PathVariable Integer id, @RequestBody DeviceDTO dto) {
+        return svc.updateDto(id, dto);
     }
 
     @PreAuthorize("hasPermission(null,'DEVICES_DELETE')")
@@ -44,4 +46,3 @@ public class DeviceController {
         svc.delete(id);
     }
 }
-

@@ -1,7 +1,6 @@
 package org.example.shubackend.security;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.flogger.Flogger;
 import lombok.extern.slf4j.Slf4j;
 import org.example.shubackend.entity.User;
 import org.springframework.security.access.PermissionEvaluator;
@@ -14,16 +13,18 @@ import java.io.Serializable;
 @Component
 @RequiredArgsConstructor
 public class CustomPermissionEvaluator implements PermissionEvaluator {
-    private final boolean DEBUG = true;
+    private static final boolean DEBUG = true;
+
     @Override
     public boolean hasPermission(Authentication auth, Object targetDomainObject, Object permission) {
+        log.info("check permission: {} of {}", auth, permission);
         if (auth == null || !(permission instanceof String perm)) return false;
-        log.info(auth.getPrincipal().toString());
-        if(DEBUG && auth.getPrincipal().equals("anonymousUser")) return true;
+        if (DEBUG && auth.getPrincipal().equals("anonymousUser")) return true;
         User principal = (User) auth.getPrincipal();
+        log.info("user: {}", principal.getUsername());
         return principal.getRoles().stream()
-                .flatMap(r -> r.getPermissions().stream())
-                .anyMatch(p -> p.getName().name().equalsIgnoreCase(perm));
+                .flatMap(role -> role.getPermissions().stream())
+                .anyMatch(r -> r.getName().name().equalsIgnoreCase(perm));
     }
 
     @Override

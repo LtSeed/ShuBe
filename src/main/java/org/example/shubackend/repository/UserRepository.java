@@ -1,7 +1,6 @@
 package org.example.shubackend.repository;
 
 import org.example.shubackend.entity.User;
-import org.example.shubackend.entity.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

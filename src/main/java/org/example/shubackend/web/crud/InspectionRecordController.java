@@ -1,7 +1,7 @@
 package org.example.shubackend.web.crud;
 
 import lombok.RequiredArgsConstructor;
-import org.example.shubackend.entity.work.inspection.InspectionRecord;
+import org.example.shubackend.dto.inspection.InspectionRecordDTO;
 import org.example.shubackend.service.crud.InspectionRecordCrudService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,33 +13,43 @@ import java.util.Optional;
 @RequestMapping("/inspection-records")
 @RequiredArgsConstructor
 class InspectionRecordController {
+
     private final InspectionRecordCrudService svc;
 
-    @PreAuthorize("hasPermission(null,'INSPECTION_RECORDS_READ')")
+    /* -------- READ -------- */
+
+    @PreAuthorize("hasPermission(principal,'INSPECTION_RECORDS_READ')")
     @GetMapping
-    public List<InspectionRecord> list() {
-        return svc.findAll();
+    public List<InspectionRecordDTO> list() {
+        return svc.findAllDto();
     }
 
-    @PreAuthorize("hasPermission(null,'INSPECTION_RECORDS_READ')")
+    @PreAuthorize("hasPermission(principal,'INSPECTION_RECORDS_READ')")
     @GetMapping("/{id}")
-    public Optional<InspectionRecord> one(@PathVariable Integer id) {
-        return svc.find(id);
+    public Optional<InspectionRecordDTO> one(@PathVariable Integer id) {
+        return svc.findDto(id);
     }
 
-    @PreAuthorize("hasPermission(null,'INSPECTION_RECORDS_CREATE')")
+    /* -------- CREATE -------- */
+
+    @PreAuthorize("hasPermission(principal,'INSPECTION_RECORDS_CREATE')")
     @PostMapping
-    public InspectionRecord create(@RequestBody InspectionRecord d) {
-        return svc.create(d);
+    public InspectionRecordDTO create(@RequestBody InspectionRecordDTO body) {
+        return svc.createDto(body);
     }
 
-    @PreAuthorize("hasPermission(null,'INSPECTION_RECORDS_UPDATE')")
+    /* -------- UPDATE -------- */
+
+    @PreAuthorize("hasPermission(principal,'INSPECTION_RECORDS_UPDATE')")
     @PutMapping("/{id}")
-    public InspectionRecord upd(@PathVariable Integer id, @RequestBody InspectionRecord d) {
-        return svc.update(id, d);
+    public InspectionRecordDTO upd(@PathVariable Integer id,
+                                   @RequestBody InspectionRecordDTO body) {
+        return svc.updateDto(id, body);
     }
 
-    @PreAuthorize("hasPermission(null,'INSPECTION_RECORDS_DELETE')")
+    /* -------- DELETE -------- */
+
+    @PreAuthorize("hasPermission(principal,'INSPECTION_RECORDS_DELETE')")
     @DeleteMapping("/{id}")
     public void del(@PathVariable Integer id) {
         svc.delete(id);

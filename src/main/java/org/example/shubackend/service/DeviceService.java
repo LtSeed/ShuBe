@@ -32,6 +32,7 @@ public class DeviceService {
         // 调用仓库接口，一次性查询这些位置上的所有设备
         return deviceRepository.findByLocation_LocationNameIn(neighborLocations);
     }
+
     public List<Device> getAllDevices() {
         return deviceRepository.findAll();
     }

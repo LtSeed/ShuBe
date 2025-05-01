@@ -9,4 +9,5 @@ public record ResetPasswordRequest(
         @Email String email,     // 邮箱
         @NotBlank String newPassword, // 新密码
         @NotBlank String confirmPassword // 确认密码
-) {}
+) {
+}
