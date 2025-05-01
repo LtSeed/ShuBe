@@ -8,5 +8,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface SimpleDeviceRoleMapper {
     SimpleDeviceRoleDTO toDto(DeviceRole entity);
+
     DeviceRole toEntity(SimpleDeviceRoleDTO dto);
 }

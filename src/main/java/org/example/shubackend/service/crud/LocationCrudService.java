@@ -1,6 +1,5 @@
 package org.example.shubackend.service.crud;
 
-import lombok.RequiredArgsConstructor;
 import org.example.shubackend.dto.device.LocationDTO;
 import org.example.shubackend.dtomapper.device.LocationMapper;
 import org.example.shubackend.entity.work.device.Location;
@@ -27,9 +26,9 @@ public class LocationCrudService extends GenericCrudService<Location, Integer> {
 
     public List<LocationDTO> findAllDto() {
         return repo.findAll()
-                   .stream()
-                   .map(mapper::toDto)
-                   .collect(Collectors.toList());
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 
     public Optional<LocationDTO> findDto(Integer id) {

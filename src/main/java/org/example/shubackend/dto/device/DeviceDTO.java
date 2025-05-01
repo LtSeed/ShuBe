@@ -2,9 +2,10 @@
 package org.example.shubackend.dto.device;
 
 public record DeviceDTO(
-    Integer id,
-    String deviceName,
-    DeviceRoleDTO deviceRole,
-    LocationDTO location,
-    String status
-) {}
+        Integer id,
+        String deviceName,
+        DeviceRoleDTO deviceRole,
+        LocationDTO location,
+        String status
+) {
+}

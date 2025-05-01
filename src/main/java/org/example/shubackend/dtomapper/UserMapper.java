@@ -1,9 +1,9 @@
 package org.example.shubackend.dtomapper;
 
 import org.example.shubackend.dto.perm.UserWithRolesDTO;
+import org.example.shubackend.dtomapper.perm.RoleMapper;
 import org.example.shubackend.entity.User;
 import org.example.shubackend.repository.RoleRepository;
-import org.example.shubackend.dtomapper.perm.RoleMapper;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 

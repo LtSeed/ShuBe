@@ -10,13 +10,15 @@ import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(
-    componentModel = "spring",
-    uses = { DeviceRoleMapper.class, LocationMapper.class }
+        componentModel = "spring",
+        uses = {DeviceRoleMapper.class, LocationMapper.class}
 )
 public abstract class DeviceMapper {
 
-    @Autowired protected DeviceRoleRepository deviceRoleRepo;
-    @Autowired protected LocationRepository   locationRepo;
+    @Autowired
+    protected DeviceRoleRepository deviceRoleRepo;
+    @Autowired
+    protected LocationRepository locationRepo;
 
     /* Entity → DTO */
     @Mapping(target = "status", source = "status")

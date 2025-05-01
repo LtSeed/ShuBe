@@ -12,24 +12,43 @@ import java.util.Optional;
 
 /* UserController (全 CRUD + 角色赋予/移除) */
 @RestController
-@RequestMapping("/users") @RequiredArgsConstructor
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserCrudService userSvc;
     private final RoleRepository roleRepo;
 
     /* 列表 / 单查 */
-    @PreAuthorize("hasPermission(null,'USERS_READ')") @GetMapping
-    public List<UserWithRolesDTO> list(){return userSvc.findAllDto();}
-    @PreAuthorize("hasPermission(null,'USERS_READ')") @GetMapping("/{id}")
-    public Optional<UserWithRolesDTO> one(@PathVariable Integer id){return userSvc.findDto(id);}
+    @PreAuthorize("hasPermission(null,'USERS_READ')")
+    @GetMapping
+    public List<UserWithRolesDTO> list() {
+        return userSvc.findAllDto();
+    }
+
+    @PreAuthorize("hasPermission(null,'USERS_READ')")
+    @GetMapping("/{id}")
+    public Optional<UserWithRolesDTO> one(@PathVariable Integer id) {
+        return userSvc.findDto(id);
+    }
 
     /* 创建 / 更新 / 删除 */
-    @PreAuthorize("hasPermission(null,'USERS_CREATE')") @PostMapping
-    public UserWithRolesDTO create(@RequestBody UserWithRolesDTO d){return userSvc.createDto(d);}
-    @PreAuthorize("hasPermission(null,'USERS_UPDATE')") @PutMapping("/{id}")
-    public UserWithRolesDTO update(@PathVariable Integer id,@RequestBody UserWithRolesDTO d){return userSvc.updateDto(id,d);}
-    @PreAuthorize("hasPermission(null,'USERS_DELETE')") @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id){userSvc.delete(id);}
+    @PreAuthorize("hasPermission(null,'USERS_CREATE')")
+    @PostMapping
+    public UserWithRolesDTO create(@RequestBody UserWithRolesDTO d) {
+        return userSvc.createDto(d);
+    }
+
+    @PreAuthorize("hasPermission(null,'USERS_UPDATE')")
+    @PutMapping("/{id}")
+    public UserWithRolesDTO update(@PathVariable Integer id, @RequestBody UserWithRolesDTO d) {
+        return userSvc.updateDto(id, d);
+    }
+
+    @PreAuthorize("hasPermission(null,'USERS_DELETE')")
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Integer id) {
+        userSvc.delete(id);
+    }
 
 }

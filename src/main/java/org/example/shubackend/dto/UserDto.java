@@ -8,17 +8,11 @@ import java.util.Set;
 
 public class UserDto {
 
-    private Integer id;
-
-    private String username;
-
-    private String account;
-
-    private Instant createdAt;
-
-    private String email;
-
-    private String phone;
-
     private final Set<Role> roles = new HashSet<>();
+    private Integer id;
+    private String username;
+    private String account;
+    private Instant createdAt;
+    private String email;
+    private String phone;
 }

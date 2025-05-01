@@ -2,9 +2,9 @@ package org.example.shubackend.service.crud;
 
 import jakarta.transaction.Transactional;
 import org.example.shubackend.dto.emergency.EmergencyLogDTO;
+import org.example.shubackend.dtomapper.emergency.EmergencyLogMapper;
 import org.example.shubackend.entity.work.device.emergency.EmergencyLog;
 import org.example.shubackend.repository.EmergencyLogRepository;
-import org.example.shubackend.dtomapper.emergency.EmergencyLogMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 

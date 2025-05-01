@@ -1,10 +1,9 @@
 package org.example.shubackend.service.crud;
 
-import lombok.RequiredArgsConstructor;
 import org.example.shubackend.dto.device.DeviceDTO;
+import org.example.shubackend.dtomapper.device.DeviceMapper;
 import org.example.shubackend.entity.work.device.Device;
 import org.example.shubackend.repository.DeviceRepository;
-import org.example.shubackend.dtomapper.device.DeviceMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

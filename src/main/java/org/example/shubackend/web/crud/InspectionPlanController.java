@@ -3,8 +3,8 @@ package org.example.shubackend.web.crud;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.shubackend.dto.inspection.InspectionPlanDTO;
-import org.example.shubackend.service.crud.InspectionPlanCrudService;
 import org.example.shubackend.dtomapper.inspection.InspectionPlanMapper;
+import org.example.shubackend.service.crud.InspectionPlanCrudService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 

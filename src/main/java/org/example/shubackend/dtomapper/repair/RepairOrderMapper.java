@@ -3,10 +3,10 @@ package org.example.shubackend.dtomapper.repair;
 
 import org.example.shubackend.dto.repair.RepairOrderDTO;
 import org.example.shubackend.dtomapper.inspection.SimpleDeviceMapper;
+import org.example.shubackend.dtomapper.inspection.SimpleUserMapper;
 import org.example.shubackend.entity.work.repair.RepairOrder;
 import org.example.shubackend.repository.DeviceRepository;
 import org.example.shubackend.repository.UserRepository;
-import org.example.shubackend.dtomapper.inspection.SimpleUserMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;

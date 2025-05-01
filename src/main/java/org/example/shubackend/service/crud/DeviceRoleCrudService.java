@@ -4,7 +4,6 @@ import org.example.shubackend.dto.device.DeviceRoleDTO;
 import org.example.shubackend.dtomapper.device.DeviceRoleMapper;
 import org.example.shubackend.entity.work.device.DeviceRole;
 import org.example.shubackend.repository.DeviceRoleRepository;
-import org.example.shubackend.dtomapper.device.SimpleDeviceRoleMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +26,9 @@ public class DeviceRoleCrudService extends GenericCrudService<DeviceRole, Intege
 
     public List<DeviceRoleDTO> findAllDto() {
         return repo.findAll()
-                   .stream()
-                   .map(mapper::toDto)
-                   .collect(Collectors.toList());
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 
     public Optional<DeviceRoleDTO> findDto(Integer id) {

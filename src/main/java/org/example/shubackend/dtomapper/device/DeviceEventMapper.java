@@ -1,8 +1,8 @@
 package org.example.shubackend.dtomapper.device;
 
 import org.example.shubackend.dto.device.DeviceEventDTO;
-import org.example.shubackend.dto.device.SimpleDeviceRoleDTO;
 import org.example.shubackend.dto.device.EmergencyDTO;
+import org.example.shubackend.dto.device.SimpleDeviceRoleDTO;
 import org.example.shubackend.entity.work.device.event.DeviceEvent;
 import org.example.shubackend.entity.work.device.event.FireDeviceEventCode;
 import org.example.shubackend.repository.DeviceRoleRepository;

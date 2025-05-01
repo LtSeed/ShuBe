@@ -2,9 +2,9 @@
 package org.example.shubackend.service.crud;
 
 import org.example.shubackend.dto.device.DeviceEventLogDTO;
+import org.example.shubackend.dtomapper.device.DeviceEventLogMapper;
 import org.example.shubackend.entity.work.device.event.DeviceEventLog;
 import org.example.shubackend.repository.DeviceEventLogRepository;
-import org.example.shubackend.dtomapper.device.DeviceEventLogMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

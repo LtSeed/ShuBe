@@ -1,9 +1,9 @@
 package org.example.shubackend.service.crud;
 
 import org.example.shubackend.dto.inspection.InspectionRecordDTO;
+import org.example.shubackend.dtomapper.inspection.InspectionRecordMapper;
 import org.example.shubackend.entity.work.inspection.InspectionRecord;
 import org.example.shubackend.repository.InspectionRecordRepository;
-import org.example.shubackend.dtomapper.inspection.InspectionRecordMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
